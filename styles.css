@@ -1691,7 +1691,9 @@ h2 {
   }
 
   .hero-title {
-    font-size: clamp(2rem, 12vw, 5.5rem);
+    /* "KIAZAKI." measures ~4.8em wide in the display face; the second term is a
+       fit cap so the word can never overflow the shell and lose its last letter. */
+    font-size: min(clamp(2.4rem, 15vw, 6rem), calc((100vw - 48px) / 4.95));
     line-height: 0.9;
   }
 
@@ -1900,5 +1902,237 @@ h2 {
 
   .js .freq-display {
     animation: none;
+  }
+}
+
+/* ---------- journal entries (post pages) ---------- */
+
+.post.shell {
+  max-width: 820px;
+  padding: clamp(96px, 12vw, 150px) clamp(20px, 5vw, 40px) 0;
+}
+
+.post-kicker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 16px;
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  line-height: 1.5;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.post-kicker .entry-no {
+  color: var(--ember);
+}
+
+.post-kicker .entry-kanji {
+  font-family: var(--jp);
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  color: var(--paper-dim);
+}
+
+.post-title {
+  margin: 20px 0 0;
+  font-family: var(--heading);
+  font-size: clamp(2.1rem, 6.4vw, 4.2rem);
+  font-weight: 400;
+  line-height: 1.04;
+  letter-spacing: 0.01em;
+}
+
+.post-lede {
+  margin: 24px 0 0;
+  font-family: var(--fell);
+  font-size: clamp(1.08rem, 2.3vw, 1.4rem);
+  line-height: 1.58;
+  color: var(--paper-dim);
+}
+
+.post-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  margin: 30px 0 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  line-height: 1.6;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.post-meta a {
+  color: var(--paper-dim);
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.post-body {
+  margin-top: clamp(34px, 5vw, 58px);
+}
+
+.post-body p {
+  margin: 0 0 1.25em;
+  font-size: 17.5px;
+  line-height: 1.78;
+  color: var(--paper);
+  text-wrap: pretty;
+}
+
+.post-body h2 {
+  margin: 2.1em 0 0.6em;
+  font-family: var(--heading);
+  font-size: clamp(1.5rem, 3.4vw, 2.1rem);
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+.post-body em {
+  color: var(--paper-dim);
+}
+
+.post-quote {
+  margin: 2.1em 0;
+  padding: 2px 0 2px 22px;
+  border-left: 1px solid var(--ember);
+  font-family: var(--fell);
+  font-size: clamp(1.15rem, 2.5vw, 1.5rem);
+  font-style: normal;
+  line-height: 1.55;
+  color: var(--paper-dim);
+}
+
+.post-practice {
+  margin: 1.5em 0 1.8em;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+.post-practice li {
+  display: flex;
+  gap: 16px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 16.5px;
+  line-height: 1.6;
+  color: var(--paper-dim);
+}
+
+.post-practice li > span:first-child {
+  flex: none;
+  padding-top: 5px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--ember);
+}
+
+.post-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 28px;
+  margin-top: clamp(44px, 6vw, 68px);
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+
+.post-nav a {
+  color: var(--paper-dim);
+}
+
+.post-nav a:hover {
+  color: var(--ember);
+}
+
+.post-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px 24px;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 26px clamp(20px, 5vw, 40px) clamp(52px, 8vw, 96px);
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.18em;
+  line-height: 1.6;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ---------- journal extras on the home page ---------- */
+
+.notes-shelf {
+  margin: 26px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  line-height: 2;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.notes-shelf .shelf-label {
+  margin-right: 10px;
+  color: var(--paper-dim);
+}
+
+.notes-shelf em {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-style: italic;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--paper-dim);
+}
+
+.notes-shelf a {
+  color: var(--paper-dim);
+  border-bottom: 1px solid var(--line-strong);
+  white-space: nowrap;
+}
+
+.notes-shelf a:hover {
+  color: var(--ember);
+}
+
+.foot-tag {
+  margin: 18px 0 0;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  line-height: 1.6;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+@media (max-width: 760px) {
+  .post-body p {
+    font-size: 16.5px;
+    line-height: 1.72;
+  }
+
+  .post-meta {
+    font-size: 9px;
+  }
+
+  .notes-shelf {
+    line-height: 1.9;
   }
 }
