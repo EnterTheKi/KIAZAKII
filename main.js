@@ -204,4 +204,161 @@
   window.addEventListener("scroll", reveal, { passive: true });
   window.addEventListener("resize", reveal);
   reveal();
+
+  /* --- the merch archive --- */
+
+  const merchGrid = document.getElementById("merch-grid");
+  const lightbox = document.getElementById("lightbox");
+
+  if (merchGrid && lightbox) {
+    const pieces = Array.from(merchGrid.querySelectorAll(".piece"));
+    const filterButtons = Array.from(document.querySelectorAll(".merch-filters button"));
+    const lbImg = document.getElementById("lb-img");
+    const lbTitle = document.getElementById("lb-title");
+    const lbCount = document.getElementById("lb-count");
+    const lbCat = document.getElementById("lb-cat");
+    const lbClose = lightbox.querySelector(".lb-close");
+    const lbPrev = lightbox.querySelector(".lb-prev");
+    const lbNext = lightbox.querySelector(".lb-next");
+
+    const LIMIT = 12;
+    const moreButton = document.getElementById("merch-more");
+    const merchSection = document.getElementById("merch");
+
+    let visible = [];
+    let current = 0;
+    let lastFocus = null;
+    let activeFilter = "all";
+    let expanded = false;
+
+    const applyView = () => {
+      const matches = pieces.filter(
+        (piece) => activeFilter === "all" || piece.dataset.cat === activeFilter
+      );
+
+      matches.forEach((piece, index) => {
+        piece.hidden = !expanded && index >= LIMIT;
+      });
+
+      visible = matches.filter((piece) => !piece.hidden);
+
+      if (!moreButton) return;
+      if (matches.length <= LIMIT) {
+        moreButton.hidden = true;
+        return;
+      }
+
+      moreButton.hidden = false;
+      moreButton.setAttribute("aria-expanded", String(expanded));
+      moreButton.innerHTML = expanded
+        ? 'Show fewer pieces <span aria-hidden="true">↑</span>'
+        : 'View all ' + matches.length + ' pieces <span aria-hidden="true">↓</span>';
+    };
+
+    const render = (index) => {
+      const piece = visible[index];
+      if (!piece) return;
+      const button = piece.querySelector(".piece-btn");
+      const image = piece.querySelector("img");
+      current = index;
+      lbImg.src = button.dataset.full;
+      lbImg.alt = image.alt;
+      lbTitle.textContent = button.dataset.title;
+      lbCat.textContent = button.dataset.cat;
+      lbCount.textContent =
+        String(index + 1).padStart(2, "0") + " / " + String(visible.length).padStart(2, "0");
+    };
+
+    const closeLightbox = () => {
+      if (lightbox.hidden) return;
+      lightbox.hidden = true;
+      document.body.classList.remove("lb-open");
+      lbImg.removeAttribute("src");
+      if (lastFocus) lastFocus.focus();
+      lastFocus = null;
+    };
+
+    const openLightbox = (piece, trigger) => {
+      const index = visible.indexOf(piece);
+      if (index < 0) return;
+      lastFocus = trigger;
+      render(index);
+      lightbox.hidden = false;
+      document.body.classList.add("lb-open");
+      lbClose.focus();
+    };
+
+    const step = (direction) => {
+      if (!visible.length) return;
+      render((current + direction + visible.length) % visible.length);
+    };
+
+    pieces.forEach((piece) => {
+      const button = piece.querySelector(".piece-btn");
+      button.addEventListener("click", () => openLightbox(piece, button));
+    });
+
+    filterButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        closeLightbox();
+        filterButtons.forEach((other) => {
+          const isActive = other === button;
+          other.classList.toggle("is-active", isActive);
+          other.setAttribute("aria-pressed", String(isActive));
+        });
+        activeFilter = button.dataset.filter;
+        expanded = false;
+        applyView();
+      });
+    });
+
+    moreButton?.addEventListener("click", () => {
+      expanded = !expanded;
+      applyView();
+      if (!expanded) {
+        merchSection?.scrollIntoView({
+          behavior: reducedMotion ? "auto" : "smooth",
+          block: "start",
+        });
+      }
+    });
+
+    applyView();
+
+    lbClose.addEventListener("click", closeLightbox);
+    lbPrev.addEventListener("click", () => step(-1));
+    lbNext.addEventListener("click", () => step(1));
+
+    lightbox.addEventListener("click", (event) => {
+      if (event.target === lightbox) closeLightbox();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (lightbox.hidden) return;
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeLightbox();
+      } else if (event.key === "ArrowRight") {
+        event.preventDefault();
+        step(1);
+      } else if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        step(-1);
+      }
+    });
+
+    lightbox.addEventListener("keydown", (event) => {
+      if (event.key !== "Tab") return;
+      const focusables = [lbClose, lbPrev, lbNext];
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    });
+  }
 })();
